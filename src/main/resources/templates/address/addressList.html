@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body>
+
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader" />
+
+    <!--search bar-->
+    <div class="align-content-end">
+        <form role="form" th:action="@{/address/friend/{name} (name=${name})}" method="get">
+            <label for="name">검색할 친구</label>
+            <input type="text" id="name" name="name" class="form-control">
+            <button type="submit" class="btn btn-outline-primary float-right">검색</button>
+        </form>
+    </div>
+
+    <div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>이름</th>
+                <th>나이</th>
+                <th>전화번호</th>
+                <th>삭제가능번호</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr  th:each="address : ${addresses}">
+                <td th:text="${address.id}"></td>
+                <td th:text="${address.name}"></td>
+                <td th:text="${address.age}"></td>
+                <td th:text="${address.phone}"></td>
+                <td>
+                    <a th:if="${address.phone.startsWith('02', 0)}" th:href="'javascript:cancel('+${address.id}+')'"
+                       class="btn btn-danger">삭제 가능</a>
+                    <span th:if="${!address.phone.startsWith('02', 0)}">삭제 불가능</span>
+                </td>
+                <td>
+                    <a th:href="'javascript:updateAddress('+${address.id}+')'"
+                       class="btn btn-info">수정</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <button class="btn btn-primary float-right">
+            <a href="/address/new" style="color:white">추가</a>
+        </button>
+    </div>
+    <div th:replace="fragments/footer :: footer" />
+
+</div>
+<script>
+    function cancel(id) {
+        const form = document.createElement("form");
+        form.setAttribute("method", "post");
+        form.setAttribute("action", "/address/" + id + "/delete");
+        document.body.appendChild(form);
+        form.submit();
+    }
+    function updateAddress(id) {
+        const form = document.createElement("form");
+        form.setAttribute("method", "post");
+        form.setAttribute("action", "/address/" + id + "/update");
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
+</body>
+</html>
